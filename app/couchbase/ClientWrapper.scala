@@ -9,7 +9,7 @@ import collection.JavaConversions._
 // Yeah I know JavaFuture.get is really ugly, but what can I do ???
 trait ClientWrapper {
 
-  def queryAsync[T](view: View, query: Query)(implicit client: CouchbaseClient, r: Reads[T], ec: ExecutionContext): Future[List[T]] = {
+  def find[T](view: View, query: Query)(implicit client: CouchbaseClient, r: Reads[T], ec: ExecutionContext): Future[List[T]] = {
     Future {
       val results = client.query(view, query)
       results.iterator().map { result =>
@@ -21,7 +21,7 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def getAsync[T](key: String)(implicit client: CouchbaseClient, r: Reads[T], ec: ExecutionContext): Future[Option[T]] = {
+  def get[T](key: String)(implicit client: CouchbaseClient, r: Reads[T], ec: ExecutionContext): Future[Option[T]] = {
     Future {
       client.asyncGet(key).get() match {
         case value: String => r.reads(Json.parse(value)).asOpt
@@ -30,7 +30,7 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def setAsync[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+  def set[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     Future {
       val future = client.set(key, exp, Json.stringify(w.writes(value)))
       future.get
@@ -38,7 +38,7 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def addAsync[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+  def add[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     Future {
       val future = client.add(key, exp, Json.stringify(w.writes(value)))
       future.get
@@ -46,7 +46,7 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def deleteAsync(key: String)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[OperationStatus] = {
+  def delete(key: String)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[OperationStatus] = {
     Future {
       val future = client.delete(key)
       future.get
@@ -54,7 +54,7 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def replaceAsync[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+  def replace[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     Future {
       val future = client.replace(key, exp, Json.stringify(w.writes(value)))
       future.get
@@ -62,15 +62,15 @@ trait ClientWrapper {
     }(ec)
   }
 
-  def setAsync[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    setAsync(key, 0, value)(client, w, ec)
+  def set[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    set(key, 0, value)(client, w, ec)
   }
 
-  def addAsync[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    addAsync(key, 0, value)(client, w, ec)
+  def add[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    add(key, 0, value)(client, w, ec)
   }
 
-  def replaceAsync[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    replaceAsync(key, 0, value)(client, w, ec)
+  def replace[T](key: String, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    replace(key, 0, value)(client, w, ec)
   }
 }

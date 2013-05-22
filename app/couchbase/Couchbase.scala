@@ -7,8 +7,6 @@ import play.api.{Play, PlayException, Application}
 import collection.JavaConversions._
 import collection.mutable.ArrayBuffer
 import play.api.Play.current
-import play.api.libs.json._
-import play.api.libs.json.JsSuccess
 import scala.Some
 
 class Couchbase(client: Option[CouchbaseClient], host: String, port: String, base: String, bucket: String, pass: String, timeout: Long) {
@@ -43,7 +41,7 @@ object Couchbase extends ClientWrapper {
              host: String = Play.configuration.getString("couch.host").getOrElse("127.0.0.1"),
              port: String = Play.configuration.getString("couch.port").getOrElse("8091"),
              base: String = Play.configuration.getString("couch.base").getOrElse("pools"),
-             bucket: String = Play.configuration.getString("couch.bucket").getOrElse("beer-sample"),
+             bucket: String = Play.configuration.getString("couch.bucket").getOrElse("default"),
              pass: String = Play.configuration.getString("couch.pass").getOrElse(""),
              timeout: Long = Play.configuration.getLong("couch.timeout").getOrElse(0)): Couchbase = {
     new Couchbase(None, host, port, base, bucket, pass, timeout)

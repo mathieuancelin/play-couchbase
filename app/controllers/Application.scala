@@ -32,7 +32,7 @@ object Application extends Controller {
   def getContent(key: String) = Action {
     Async {
       withCouch { implicit couch =>
-        getAsync[String](key).map { opt =>
+        get[String](key).map { opt =>
           opt.map(Ok(_)).getOrElse(BadRequest(s"Unable to find content with key: $key"))
         }
       }
@@ -42,7 +42,7 @@ object Application extends Controller {
   def getPerson(key: String) = Action {
     Async {
       withCouch { implicit couch =>
-        getAsync[APerson](key).map { opt =>
+        get[APerson](key).map { opt =>
           opt.map(person => Ok(person.toString)).getOrElse(BadRequest(s"Unable to find person with key: $key"))
         }
       }
@@ -58,10 +58,10 @@ object Application extends Controller {
       )
       withCouch { implicit couch =>
         for {
-          _ <- deleteAsync("bob")
-          _ <- deleteAsync("jane")
-          f1 <- addAsync[JsObject]("bob", -1, json)
-          f2 <- addAsync[APerson]("jane", -1, jane)
+          _ <- delete("bob")
+          _ <- delete("jane")
+          f1 <- add[JsObject]("bob", -1, json)
+          f2 <- add[APerson]("jane", -1, jane)
         } yield Ok("bob: " +f1.getMessage + "<br/>jane: " + f2.getMessage)
       }
     }
@@ -70,12 +70,14 @@ object Application extends Controller {
   def query() = Action {
     Async {
       withCouch { implicit couch =>
+
         val view = couch.getView("beer", "by_name")
         val query = new Query().setIncludeDocs(true)
           .setLimit(20)
           .setRangeStart(ComplexKey.of("(512)"))
           .setRangeEnd(ComplexKey.of("(512)" + "\uefff"))
-        queryAsync[Beer](view, query).map { list =>
+
+        find[Beer](view, query).map { list =>
           Ok(list.map(_.toString).mkString("\n"))
         }
       }
