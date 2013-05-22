@@ -6,6 +6,7 @@ import couchbase.CouchbaseReads._
 import couchbase.Couchbase._
 import play.api.libs.concurrent.Execution.Implicits._
 import com.couchbase.client.protocol.views.{ComplexKey, Query}
+import couchbase.CouchbaseController
 
 //import play.api.libs.json.Reads._
 //import play.api.libs.json.Writes._
@@ -13,7 +14,7 @@ import com.couchbase.client.protocol.views.{ComplexKey, Query}
 case class APerson(name: String, surname: String)
 case class Beer(name: String, code: String)
 
-object Application extends Controller {
+object Application extends Controller with CouchbaseController {
 
   implicit val personReader = Json.reads[APerson]
   implicit val personWriter = Json.writes[APerson]
@@ -31,7 +32,7 @@ object Application extends Controller {
 
   def getContent(key: String) = Action {
     Async {
-      withCouch { implicit couch =>
+      withCouchbase { implicit couch =>
         get[String](key).map { opt =>
           opt.map(Ok(_)).getOrElse(BadRequest(s"Unable to find content with key: $key"))
         }
@@ -41,7 +42,7 @@ object Application extends Controller {
 
   def getPerson(key: String) = Action {
     Async {
-      withCouch { implicit couch =>
+      withCouchbase { implicit couch =>
         get[APerson](key).map { opt =>
           opt.map(person => Ok(person.toString)).getOrElse(BadRequest(s"Unable to find person with key: $key"))
         }
@@ -49,24 +50,20 @@ object Application extends Controller {
     }
   }
 
-  def create() = Action {
-    Async {
-      val jane = APerson("Jane", "Doe")
-      val json = Json.obj("name" -> "Bob", "surname" -> "Bob")
-      withCouch { implicit couch =>
-        for {
-          _ <- delete("bob")
-          _ <- delete("jane")
-          f1 <- add[JsObject]("bob", json)
-          f2 <- add[APerson]("jane", jane)
-        } yield Ok("bob: " +f1.getMessage + "<br/>jane: " + f2.getMessage)
-      }
-    }
+  def create() = CouchbaseAction { implicit client =>
+    val jane = APerson("Jane", "Doe")
+    val json = Json.obj("name" -> "Bob", "surname" -> "Bob")
+    for {
+      _ <- delete("bob")
+      _ <- delete("jane")
+      f1 <- add[JsObject]("bob", json)
+      f2 <- add[APerson]("jane", jane)
+    } yield Ok("bob: " +f1.getMessage + "<br/>jane: " + f2.getMessage)
   }
 
   def query() = Action {
     Async {
-      withCouch { implicit couch =>
+      withCouchbase { implicit couch =>
 
         val view = couch.getView("beer", "by_name")
         val query = new Query().setIncludeDocs(true)

@@ -22,9 +22,11 @@ class Couchbase(client: Option[CouchbaseClient], host: String, port: String, bas
     new Couchbase(None, host, port, base, bucket, pass, timeout)
   }
 
-  def withCouch[T](block: CouchbaseClient => T): Option[T] = {
+  def withCouchbase[T](block: CouchbaseClient => T): Option[T] = {
     client.map(block(_))
   }
+
+  def couchbaseClient = client
 }
 
 object Couchbase extends ClientWrapper {
@@ -47,12 +49,12 @@ object Couchbase extends ClientWrapper {
     new Couchbase(None, host, port, base, bucket, pass, timeout)
   }
 
-  def withCouch[T](block: CouchbaseClient => T): T = currentCouch.withCouch(block).get
+  def withCouchbase[T](block: CouchbaseClient => T): T = currentCouch.withCouchbase(block).get
 
-  def withSingleCouch[T](block: CouchbaseClient => T): T = {
+  def withSingleCouchbase[T](block: CouchbaseClient => T): T = {
     val couch = Couchbase().connect()
     try {
-      couch.withCouch(block).get
+      couch.withCouchbase(block).get
     } finally {
       couch.disconnect()
     }
