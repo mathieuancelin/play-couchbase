@@ -3,7 +3,6 @@ package couchbase
 import scala.concurrent.Future
 import play.api.mvc._
 import play.api.mvc.Results._
-import play.api.Logger
 import play.api.Play.current
 import com.couchbase.client.CouchbaseClient
 
@@ -13,7 +12,6 @@ trait CouchbaseController {
     Action {
       Async {
         val client = Couchbase.currentCouch(current).client.get
-        Logger.trace("Processed as non-blocking action using Async { ... }")
         block(client)
       }
     }
@@ -23,7 +21,6 @@ trait CouchbaseController {
     Action { request =>
       Async {
         val client = Couchbase.currentCouch(current).client.get
-        Logger.trace("Processed as non-blocking action using Async { ... }")
         block(request, client)
       }
     }

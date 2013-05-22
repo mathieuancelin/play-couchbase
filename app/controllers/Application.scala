@@ -36,7 +36,7 @@ object Application extends Controller with CouchbaseController {
     }
   }
 
-  def getPerson(key: String) = CouchbaseAction { implicit client =>
+  def getPerson(key: String) = CouchbaseAction { implicit clients =>
     get[Person](key).map { opt =>
       opt.map(person => Ok(person.toString)).getOrElse(BadRequest(s"Unable to find person with key: $key"))
     }
