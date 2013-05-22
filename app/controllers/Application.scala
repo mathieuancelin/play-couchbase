@@ -52,16 +52,13 @@ object Application extends Controller {
   def create() = Action {
     Async {
       val jane = APerson("Jane", "Doe")
-      val json = Json.obj(
-        "name" -> "Bob",
-        "surname" -> "Maurane"
-      )
+      val json = Json.obj("name" -> "Bob", "surname" -> "Bob")
       withCouch { implicit couch =>
         for {
           _ <- delete("bob")
           _ <- delete("jane")
-          f1 <- add[JsObject]("bob", -1, json)
-          f2 <- add[APerson]("jane", -1, jane)
+          f1 <- add[JsObject]("bob", json)
+          f2 <- add[APerson]("jane", jane)
         } yield Ok("bob: " +f1.getMessage + "<br/>jane: " + f2.getMessage)
       }
     }

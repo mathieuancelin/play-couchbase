@@ -11,7 +11,7 @@ trait ClientWrapper {
 
   def find[T](view: View, query: Query)(implicit client: CouchbaseClient, r: Reads[T], ec: ExecutionContext): Future[List[T]] = {
     Future {
-      val results = client.query(view, query)
+      val results = client.asyncQuery(view, query).get
       results.iterator().map { result =>
         r.reads(Json.parse(result.getDocument.asInstanceOf[String])) match {
           case e:JsError => {println(e.toString);None}
