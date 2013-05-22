@@ -12,7 +12,7 @@ trait CouchbaseController {
   def CouchbaseAction(block: CouchbaseClient => Future[Result]):EssentialAction = {
     Action {
       Async {
-        val client = Couchbase.currentCouch(current).couchbaseClient.get
+        val client = Couchbase.currentCouch(current).client.get
         Logger.trace("Processed as non-blocking action using Async { ... }")
         block(client)
       }
@@ -22,7 +22,7 @@ trait CouchbaseController {
   def CouchbaseAction(block: (play.api.mvc.Request[AnyContent], CouchbaseClient) => Future[Result]):EssentialAction = {
     Action { request =>
       Async {
-        val client = Couchbase.currentCouch(current).couchbaseClient.get
+        val client = Couchbase.currentCouch(current).client.get
         Logger.trace("Processed as non-blocking action using Async { ... }")
         block(request, client)
       }

@@ -9,7 +9,7 @@ import collection.mutable.ArrayBuffer
 import play.api.Play.current
 import scala.Some
 
-class Couchbase(client: Option[CouchbaseClient], host: String, port: String, base: String, bucket: String, pass: String, timeout: Long) {
+class Couchbase(val client: Option[CouchbaseClient], val host: String, val port: String, val base: String, val bucket: String, val pass: String, val timeout: Long) {
 
   def connect() = {
     val uris = ArrayBuffer(URI.create(s"http://$host:$port/$base"))
@@ -25,8 +25,6 @@ class Couchbase(client: Option[CouchbaseClient], host: String, port: String, bas
   def withCouchbase[T](block: CouchbaseClient => T): Option[T] = {
     client.map(block(_))
   }
-
-  def couchbaseClient = client
 }
 
 object Couchbase extends ClientWrapper {
