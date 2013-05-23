@@ -38,12 +38,12 @@ object Couchbase extends ClientWrapper {
   }
 
   def apply(
-             host: String = Play.configuration.getString("couch.host").getOrElse("127.0.0.1"),
-             port: String = Play.configuration.getString("couch.port").getOrElse("8091"),
-             base: String = Play.configuration.getString("couch.base").getOrElse("pools"),
-             bucket: String = Play.configuration.getString("couch.bucket").getOrElse("default"),
-             pass: String = Play.configuration.getString("couch.pass").getOrElse(""),
-             timeout: Long = Play.configuration.getLong("couch.timeout").getOrElse(0)): Couchbase = {
+             host:    String = Play.configuration.getString("couchbase.host").getOrElse("127.0.0.1"),
+             port:    String = Play.configuration.getString("couchbase.port").getOrElse("8091"),
+             base:    String = Play.configuration.getString("couchbase.base").getOrElse("pools"),
+             bucket:  String = Play.configuration.getString("couchbase.bucket").getOrElse("default"),
+             pass:    String = Play.configuration.getString("couchbase.pass").getOrElse(""),
+             timeout: Long   = Play.configuration.getLong("couchbase.timeout").getOrElse(0)): Couchbase = {
     new Couchbase(None, host, port, base, bucket, pass, timeout)
   }
 

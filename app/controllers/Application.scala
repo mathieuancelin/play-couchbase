@@ -30,13 +30,13 @@ object Application extends Controller with CouchbaseController {
     Ok(views.html.index("Hello World!"))
   }
 
-  def getContent(key: String) = CouchbaseAction { implicit client =>
+  def getContent(key: String) = CouchbaseAction { (request, client) =>
     get[String](key).map { opt =>
       opt.map(Ok(_)).getOrElse(BadRequest(s"Unable to find content with key: $key"))
     }
   }
 
-  def getPerson(key: String) = CouchbaseAction { implicit clients =>
+  def getPerson(key: String) = CouchbaseAction { implicit client =>
     get[Person](key).map { opt =>
       opt.map(person => Ok(person.toString)).getOrElse(BadRequest(s"Unable to find person with key: $key"))
     }

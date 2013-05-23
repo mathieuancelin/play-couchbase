@@ -9,6 +9,8 @@
     <div id="get2"></div>
     <br/>
     <div id="get3"></div>
+    <br/>
+    <div id="get4"></div>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -22,6 +24,10 @@
                 return $.get('@routes.Application.create()')
             }).then(function(data) {
                 $('#get3').html(data);
+            }).then(function() {
+                return $.get('@routes.Application.query()')
+            }).then(function(data) {
+                $('#get4').html(data);
             });
         });
     </script>
