@@ -11,7 +11,7 @@ trait CouchbaseController {
   def CouchbaseAction(block: CouchbaseClient => Future[Result]):EssentialAction = {
     Action {
       Async {
-        val client = Couchbase.currentCouch(current).client.get
+        implicit val client = Couchbase.currentCouch(current).client.get
         block(client)
       }
     }
