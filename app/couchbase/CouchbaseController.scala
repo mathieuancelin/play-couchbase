@@ -20,7 +20,7 @@ trait CouchbaseController {
   def CouchbaseAction(block: (play.api.mvc.Request[AnyContent], CouchbaseClient) => Future[Result]):EssentialAction = {
     Action { request =>
       Async {
-        val client = Couchbase.currentCouch(current).client.get
+        implicit val client = Couchbase.currentCouch(current).client.get
         block(request, client)
       }
     }
