@@ -235,7 +235,7 @@ trait ClientWrapper {
         }
       }
     } else {
-      Polling.system.scheduler.scheduleOnce(FiniteDuration(10, TimeUnit.MILLISECONDS)) {
+      Polling.system.scheduler.scheduleOnce(FiniteDuration(50, TimeUnit.MILLISECONDS)) {
         pollCouchbaseFutureUntilDoneOrCancelled(javaFuture, promise, ec)
       }(ec)
     }
