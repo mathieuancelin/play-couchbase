@@ -36,11 +36,9 @@ trait ClientWrapper {
     wrapJavaFutureInPureFuture( client.asyncGetSpatialView(docName, viewName), ec )
   }
 
-  /** def designDocument(docName: String)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[DesignDocument] = {
-    Future {
-      client.asyncGetDesignDocument(docName).get.asInstanceOf[DesignDocument]
-    }(ec)
-  }  **/
+  def designDocument(docName: String)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[DesignDocument[_]] = {
+    wrapJavaFutureInPureFuture( client.asyncGetDesignDocument(docName), ec )
+  }
 
   def createDesignDoc(name: String, value: JsObject)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[OperationStatus] = {
     wrapJavaFutureInFuture( client.asyncCreateDesignDoc(name, Json.stringify(value)), ec )
@@ -78,20 +76,25 @@ trait ClientWrapper {
   def set[T](key: String, exp: Int, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     wrapJavaFutureInFuture( client.set(key, exp, value, replicateTo), ec )
   }
+  
   def set[T](key: String, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     set(key, 0, value, replicateTo)(client, w, ec)
   }
-  def set[T](key: String, exp: Int, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.set(key, exp, value, peristTo), ec )
+  
+  def set[T](key: String, exp: Int, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.set(key, exp, value, persistTo), ec )
   }
-  def set[T](key: String, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    set(key, 0, value, peristTo)(client, w, ec)
+  
+  def set[T](key: String, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    set(key, 0, value, persistTo)(client, w, ec)
   }
-  def set[T](key: String, exp: Int, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.set(key, exp, value, peristTo, replicateTo), ec )
+  
+  def set[T](key: String, exp: Int, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.set(key, exp, value, persistTo, replicateTo), ec )
   }
-  def set[T](key: String, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    set(key, 0, value, peristTo, replicateTo)(client, w, ec)
+  
+  def set[T](key: String, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    set(key, 0, value, persistTo, replicateTo)(client, w, ec)
   }
 
   def add[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
@@ -101,20 +104,25 @@ trait ClientWrapper {
   def add[T](key: String, exp: Int, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     wrapJavaFutureInFuture( client.add(key, exp, value, replicateTo), ec )
   }
+  
   def add[T](key: String, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     add(key, 0, value, replicateTo)(client, w, ec)
   }
-  def add[T](key: String, exp: Int, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.add(key, exp, value, peristTo), ec )
+  
+  def add[T](key: String, exp: Int, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.add(key, exp, value, persistTo), ec )
   }
-  def add[T](key: String, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    add(key, 0, value, peristTo)(client, w, ec)
+  
+  def add[T](key: String, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    add(key, 0, value, persistTo)(client, w, ec)
   }
-  def add[T](key: String, exp: Int, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.add(key, exp, value, peristTo, replicateTo), ec )
+  
+  def add[T](key: String, exp: Int, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.add(key, exp, value, persistTo, replicateTo), ec )
   }
-  def add[T](key: String, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    add(key, 0, value, peristTo, replicateTo)(client, w, ec)
+  
+  def add[T](key: String, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    add(key, 0, value, persistTo, replicateTo)(client, w, ec)
   }
 
   def delete(key: String)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[OperationStatus] = {
@@ -124,11 +132,13 @@ trait ClientWrapper {
   def delete[T](key: String, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     wrapJavaFutureInFuture( client.delete(key, replicateTo), ec )
   }
-  def delete[T](key: String, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.delete(key, peristTo), ec )
+  
+  def delete[T](key: String, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.delete(key, persistTo), ec )
   }
-  def delete[T](key: String, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.delete(key, peristTo, replicateTo), ec )
+  
+  def delete[T](key: String, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.delete(key, persistTo, replicateTo), ec )
   }
 
   def replace[T](key: String, exp: Int, value: T)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
@@ -138,20 +148,25 @@ trait ClientWrapper {
   def replace[T](key: String, exp: Int, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
     wrapJavaFutureInFuture( client.replace(key, exp, value, replicateTo), ec )
   }
+  
   def replace[T](key: String, value: T, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
      replace(key, 0, value, replicateTo)(client, w, ec)
   }
-  def replace[T](key: String, exp: Int, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.replace(key, exp, value, peristTo), ec )
+  
+  def replace[T](key: String, exp: Int, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.replace(key, exp, value, persistTo), ec )
   }
-  def replace[T](key: String, value: T, peristTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    replace(key, 0, value, peristTo)(client, w, ec)
+  
+  def replace[T](key: String, value: T, persistTo: PersistTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    replace(key, 0, value, persistTo)(client, w, ec)
   }
-  def replace[T](key: String, exp: Int, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    wrapJavaFutureInFuture( client.replace(key, exp, value, peristTo, replicateTo), ec )
+  
+  def replace[T](key: String, exp: Int, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    wrapJavaFutureInFuture( client.replace(key, exp, value, persistTo, replicateTo), ec )
   }
-  def replace[T](key: String, value: T, peristTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
-    replace(key, 0, value, peristTo,replicateTo)(client, w, ec)
+  
+  def replace[T](key: String, value: T, persistTo: PersistTo, replicateTo: ReplicateTo)(implicit client: CouchbaseClient, w: Writes[T], ec: ExecutionContext): Future[OperationStatus] = {
+    replace(key, 0, value, persistTo,replicateTo)(client, w, ec)
   }
 
   def flush(delay: Int)(implicit client: CouchbaseClient, ec: ExecutionContext): Future[OperationStatus] = {
